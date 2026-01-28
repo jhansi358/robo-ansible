@@ -1,7 +1,7 @@
 #!/bin/bash
 
 AMI=ami-0b4f379183e5706b9 #this keeps on changing
-SG_ID=sg-0bfa874b7d7f3b88c #replace with your SG ID
+SG_ID=sgr-030b47b7bc3472b99 #replace with your SG ID
 INSTANCES=("mongodb" "redis" "mysql" "rabbitmq" "catalogue" "user" "cart" "shipping" "payment" "dispatch" "web")
 ZONE_ID=Z055763434TXUZ9JMBMT3 # replace your zone ID
 DOMAIN_NAME="jhansidevops.icu"
