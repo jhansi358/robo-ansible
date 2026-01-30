@@ -56,8 +56,8 @@
     ansible.builtin.command:  mongo --host mongodb.jhansidevops.icu --quiet --eval 'db = db.getSiblingDB("catalogue"); db.products.count()'
     register: product_count
   - name: load catalogue to database
-    ansible.builtin.command: mongo --host mongodb.jhansidevops.icu </app/schema/catalogue.js
-    when: product_count.stdout == "0"
+    ansible.builtin.shell: mongo --host mongodb.jhansidevops.icu </app/schema/catalogue.js
+    when: product_count.stdout == "0"  
   - name: start and enable catalogue
     ansible.builtin.service:
       name: catalogue
