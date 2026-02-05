@@ -35,7 +35,7 @@
       chdir: /app
   - name: rename jar file
     ansible.builtin.command: mv target/shipping-1.0.jar shipping.jar
-    args: null
+    args: 
       chdir: /app
 - name: create schema directory
   ansible.builtin.file:
@@ -51,23 +51,20 @@
     src: shipping.service
     dest: /etc/systemd/system/shipping.service
 - name: deamon realod and start
-  ansible.builtin.systemd_service: null
+  ansible.builtin.systemd_service: 
   daemon_reload: true
 - name: install mysql client
   ansible.builtin.dnf:
     name: mysql
     state: present
 - name: check cities schema exists or not
-  ansible.builtin.command: mysql -h mysql.jhansidevops.icu -uroot
-    -p{{mysql_password}} -sN -e "SELECT COUNT(*) FROM
-    INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = 'cities'"
+  ansible.builtin.command: mysql -h mysql.jhansidevops.icu -uroot -p{{mysql_password}} -sN -e "SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = 'cities'"
   register: schema
 - name: print output
-  ansible.builtin.debug: null
+  ansible.builtin.debug: 
   msg: "schema output: {{schema}}"
 - name: load cities data
-  ansible.builtin.shell: mysql -h mysql.jhansidevops.icu -uroot
-    -p{{mysql_password}}  < /app/schema/shipping.sql
+  ansible.builtin.shell: mysql -h mysql.jhansidevops.icu -uroot -p{{mysql_password}}  < /app/schema/shipping.sql
   when: schema.stdout != "1"
 - name: start and enable shipping
   ansible.builtin.service:
