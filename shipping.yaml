@@ -4,39 +4,39 @@
   become: yes
   vars:
     mysql_password: RoboShop@1
-  tasks: null
-- name: install maven
-  ansible.builtin.package:
-    name: maven
-    state: present
-- name: Add the user roboshop
-  ansible.builtin.user:
-    name: roboshop
-- name: Recursively remove app directory
-  ansible.builtin.file:
-    path: /app
-    state: absent
-- name: create app directory
-  ansible.builtin.file:
-    path: /app
-    state: directory
-- name: download shipping application
-  ansible.builtin.get_url:
-    url: https://roboshop-builds.s3.amazonaws.com/shipping.zip
-    dest: /tmp
-- name: Unzip the application
-  ansible.builtin.unarchive:
-    src: /tmp/shipping.zip
-    dest: /app
-    remote_src: yes
-- name: build the app with dependencies and in app directory
-  ansible.builtin.command: mvn clean package
-  args: null
-  chdir: /app
-- name: rename jar file
-  ansible.builtin.command: mv target/shipping-1.0.jar shipping.jar
-  args: null
-  chdir: /app
+  tasks: 
+  - name: install maven
+    ansible.builtin.package:
+      name: maven
+      state: present
+  - name: Add the user roboshop
+    ansible.builtin.user:
+      name: roboshop
+  - name: Recursively remove app directory
+    ansible.builtin.file:
+      path: /app
+      state: absent
+  - name: create app directory
+    ansible.builtin.file:
+      path: /app
+      state: directory
+  - name: download shipping application
+    ansible.builtin.get_url:
+      url: https://roboshop-builds.s3.amazonaws.com/shipping.zip
+      dest: /tmp
+  - name: Unzip the application
+    ansible.builtin.unarchive:
+      src: /tmp/shipping.zip
+      dest: /app
+      remote_src: yes
+  - name: build the app with dependencies and in app directory
+    ansible.builtin.command: mvn clean package
+    args: 
+      chdir: /app
+  - name: rename jar file
+    ansible.builtin.command: mv target/shipping-1.0.jar shipping.jar
+    args: null
+      chdir: /app
 - name: create schema directory
   ansible.builtin.file:
     path: /app/schema
