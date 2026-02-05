@@ -1,0 +1,70 @@
+- name: user playbook
+  hosts: user
+  become: yes
+  tasks:
+  - name: disable old nodejs and enable new
+    ansible.builtin.shell: dnf module disable nodejs -y; dnf module enable nodejs:18 -y
+  - name: install nodejs
+    ansible.builtin.package:
+      name: nodejs
+      state: present
+  - name: Add the user roboshop
+    ansible.builtin.user:
+      name: roboshop
+  - name: Recursively remove directory
+    ansible.builtin.file:
+      path: /app
+      state: absent
+  - name: create app directory
+    ansible.builtin.file:
+      path: /app
+      state: directory
+  - name: download user application
+    ansible.builtin.get_url:
+      url: https://roboshop-builds.s3.amazonaws.com/user.zip
+      dest: /tmp
+  - name: Unzip the application
+    ansible.builtin.unarchive:
+      src: /tmp/user.zip
+      dest: /app
+      remote_src: yes
+  - name: build the app with dependencies and in app directory
+    ansible.builtin.command: npm install
+    args:
+     chdir: /app
+  - name: copy user service file
+    ansible.builtin.copy:
+      src: user.service
+      dest: /etc/systemd/system/user.service
+  - name: daemon_reload
+    ansible.builtin.systemd_service:
+      daemon_reload: true
+  - name: start and enable user
+    ansible.builtin.service:
+      name: user
+      state: started
+      enabled: yes     
+  - name: copy mongodbrepo
+    ansible.builtin.copy:
+      src: mongo.repo
+      dest: /etc/yum.repos.d/mongo.repo
+  - name: install mongo client
+    ansible.builtin.package:
+      name:  mongodb-org-shell
+      state: present
+  - name: get the users count 
+    ansible.builtin.command:  mongo --host mongodb.jhansidevops.icu --quiet --eval 'db = db.getSiblingDB("users"); users.count()'
+    register: user_count
+  - name: load user to database
+    ansible.builtin.shell: mongo --host mongodb.jhansidevops.icu </app/schema/user.js
+    when: product_count.stdout == "0"  
+  - name: start and enable user
+    ansible.builtin.service:
+      name: user
+      state: restarted
+      enabled: yes
+
+
+  
+
+  
