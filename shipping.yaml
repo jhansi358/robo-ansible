@@ -43,6 +43,17 @@
     ansible.builtin.command: mv target/shipping-1.0.jar shipping.jar
     args:
       chdir: /app
+  
+  - name: create schema directory
+  ansible.builtin.file:
+    path: /app/schema
+    state: directory
+
+- name: copy schema.sql into schema directory
+  ansible.builtin.copy:
+    src: /app/db/*
+    dest: /app/schema/shipping.sql
+    remote_src: yes
 
   - name: copy shipping service
     ansible.builtin.copy:
