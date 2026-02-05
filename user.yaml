@@ -57,7 +57,7 @@
     register: user_count
   - name: load user to database
     ansible.builtin.shell: mongo --host mongodb.jhansidevops.icu </app/schema/user.js
-    when: product_count.stdout == "0"  
+    when: user_count.stdout == "0"  
   - name: start and enable user
     ansible.builtin.service:
       name: user
