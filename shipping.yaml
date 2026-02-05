@@ -37,37 +37,37 @@
     ansible.builtin.command: mv target/shipping-1.0.jar shipping.jar
     args: 
       chdir: /app
-- name: create schema directory
-  ansible.builtin.file:
-    path: /app/schema
-    state: directory
-- name: copy schema.sql into schema directory
-  ansible.builtin.copy:
-    src: /app/db/*
-    dest: /app/schema/shipping.sql
-    remote_src: yes
-- name: copy shipping service
-  ansible.builtin.copy:
-    src: shipping.service
-    dest: /etc/systemd/system/shipping.service
-- name: deamon realod and start
-  ansible.builtin.systemd_service: 
-  daemon_reload: true
-- name: install mysql client
-  ansible.builtin.dnf:
-    name: mysql
-    state: present
-- name: check cities schema exists or not
-  ansible.builtin.command: mysql -h mysql.jhansidevops.icu -uroot -p{{mysql_password}} -sN -e "SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = 'cities'"
-  register: schema
-- name: print output
-  ansible.builtin.debug: 
-  msg: "schema output: {{schema}}"
-- name: load cities data
-  ansible.builtin.shell: mysql -h mysql.jhansidevops.icu -uroot -p{{mysql_password}}  < /app/schema/shipping.sql
-  when: schema.stdout != "1"
-- name: start and enable shipping
-  ansible.builtin.service:
-    name: shipping
-    state: restarted
-    enabled: yes
+  - name: create schema directory
+    ansible.builtin.file:
+      path: /app/schema
+      state: directory
+  - name: copy schema.sql into schema directory
+    ansible.builtin.copy:
+      src: /app/db/*
+      dest: /app/schema/shipping.sql
+      remote_src: yes
+  - name: copy shipping service
+    ansible.builtin.copy:
+      src: shipping.service
+      dest: /etc/systemd/system/shipping.service
+  - name: deamon realod and start
+    ansible.builtin.systemd_service: 
+    daemon_reload: true
+  - name: install mysql client
+    ansible.builtin.dnf:
+      name: mysql
+      state: present
+  - name: check cities schema exists or not
+    ansible.builtin.command: mysql -h mysql.jhansidevops.icu -uroot -p{{mysql_password}} -sN -e "SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = 'cities'"
+    register: schema
+  - name: print output
+    ansible.builtin.debug: 
+    msg: "schema output: {{schema}}"
+  - name: load cities data
+    ansible.builtin.shell: mysql -h mysql.jhansidevops.icu -uroot -p{{mysql_password}}  < /app/schema/shipping.sql
+    when: schema.stdout != "1"
+  - name: start and enable shipping
+    ansible.builtin.service:
+      name: shipping
+      state: restarted
+      enabled: yes
