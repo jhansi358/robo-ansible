@@ -51,7 +51,7 @@
 
   - name: copy schema.sql into schema directory
     ansible.builtin.copy:
-      src: /app/db/*
+      src: /app/db/master-data.sql
       dest: /app/schema/shipping.sql
       remote_src: yes
 
