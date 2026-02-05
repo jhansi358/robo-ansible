@@ -53,7 +53,7 @@
       name:  mongodb-org-shell
       state: present
   - name: get the users count
-    ansible.builtin.command: mongo --host mongodb.jhansideops.icu --quiet --eval 'db = db.getSiblingDB("users"); db.users.count()'
+    ansible.builtin.command: mongo --host mongodb.jhansideops.icu --quiet --eval 'db = db.getSiblingDB("user"); db.user.count()'
     register: user_count
   - name: load user to database
     ansible.builtin.shell: mongo --host mongodb.jhansidevops.icu </app/schema/user.js
